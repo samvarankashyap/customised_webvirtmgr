@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tags_active %}
+{% load staticfiles %}
+{% block title %}{% trans "IpReservation" %}{% endblock %}
+{% include sidebar_ipaddress.html %}
+{% block content %}
+
+<!--""" loading the set_var customized tag and testing it """ -->
+{% load set_var %}
+ 
+{% set a = 3 %}
+{% set b = 0 %}
+{% set b = request.GET.urlencode %}
+{% set c = "some string" %}
+
+<!-- adding the form validations -->
+
+ {% if form.ipaddress.errors %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {% for error in form.ipaddress.errors  %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if form.status.errors %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {% for error in form.status.errors  %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if form.project.errors %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {% for error in form.project.errors  %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if form.activity.errors %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {% for error in form.activity.errors  %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if form.user.errors %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {% for error in form.user.errors  %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+
+
+ <div class="pagehead">
+            <h1><a href="">IPaddress Reservation</a></h1>
+        <table align="right">
+        <tr>
+        <th></th>
+	<td>
+	 <div class="input-append form-inline pull-right" style="">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="filter_input" style="margin-top:-28px;">
+                    </div>
+                    <input type="button" name="filter" class="btn btn-default" id="filter_button"  value="Filter">
+                    <button type="button" name="clear" class="btn btn-default" id="filter_clear" >Clear</button>
+                </div>
+	</td>
+        <td>
+
+        <a data-toggle="modal" href="#addserver" class="btn btn-sm btn-success pull-right">{% trans "Add Server" %}</a>
+        </td>
+	 <td>
+	<form class="form-horizontal" method="post" role="form">{% csrf_token %}
+        <button type="submit" class="btn" name="ip_addr4">{% trans "Export to CSV" %}</button>
+	</form>
+        </td>
+	</table>
+        </div>
+
+
+<!--
+<script>
+function filter(id)
+{
+temp=document.getElementById(id)
+for(inst in ipaddr)
+{
+if(temp==inst.ipaddress)
+{
+
+
+}
+
+}
+
+
+
+}
+function clear(id)
+{
+
+
+
+
+
+
+}
+</script>
+-->
+<div class="">
+{% include 'sidebar_ipaddress.html' %}
+           
+     <table border=0 id="table1" >
+		    <thead>
+		    <tr>
+                    <th align="center">{% trans "ipaddress" %}</th>
+		    <th></th>
+		    <th></th>
+		    <th></th>
+		    <th></th>
+		    <th></th>
+		    <th></th>
+		    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+		    <th align="center">{% trans "status" %}</th>
+		    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+		    <th align="center">{% trans "activity" %}</th>
+		    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+		    <th align="center">{% trans "project" %}</th>
+		    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th align="center">{% trans "user" %}</th>
+		    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th align="center">{% trans "Action" %}</th>
+		    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+		
+                <tbody>
+		{% for inst in ipaddr %}
+		<tr>
+		<form class="form-horizontal" method="post" role="form">{% csrf_token %}
+		 <input type="hidden" name= "serverip" value="{{ b }}">
+		<input type="hidden" name="instid" value="{{ inst.id }}">
+		<td  style = "width:100px">{{ inst.ipaddress }}</td>
+		<td ></td>
+		<td ></td>
+		<td ></td>
+		<td </td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+		<td > 
+
+<select name="status" id="{{inst.ipaddress}}w" disabled="disabled" style="width:100%;">
+    <option value="{{ inst.status }}">{{ inst.status }}</option>
+    <option value="occupied">Occupied</option>
+    <option value="released">Released</option>
+    <option value="-">Other</option>
+</select>
+
+
+
+
+
+</td>
+		<td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+		<td ><input type="text" name="activity" value="{{ inst.activity }}" id="{{inst.ipaddress}}x" disabled="disabled" style="width:100%;" >  </td>
+		<td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+		<td ><input type="text" name="project" value="{{ inst.project }}" id="{{inst.ipaddress}}y" disabled="disabled" style="width:100%;"> </td>
+		<td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+		<td ><input type="text" name="user" value="{{ inst.user }}" id="{{inst.ipaddress}}z" disabled="disabled" style="width:100%;"> </td>
+		<td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+	<!--	<td > <button data-toggle="modal" href="#editip" class="btn btn-sm btn-success pull-right" > {# trans "Edit" #}</button></td> -->
+		<td colspan=2> <input type="button" class="btn" value="Edit" onclick="change('{{ inst.ipaddress }}','{{ inst.ipaddress }}w','{{ inst.ipaddress }}x','{{ inst.ipaddress }}y','{{ inst.ipaddress }}z')">
+		</td>
+		<td> 
+		<button type="submit" class="btn" name="ip_addr1">{% trans "Save" %}</button>
+		</td>
+		<td>
+		<button type="submit" class="btn" name="ip_addr2">{% trans "Release" %}</button>
+		</td>
+		</form>
+		</tr>
+		{% endfor %}
+		</tbody>
+            </table>
+
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+
+</script>
+<!--
+<script>
+$(document).ready(function() {
+    $('#filter_button').click(function() {
+        var filter_val = $('#filter_input').val();
+        if(filter_val == '') {
+            $('tbody tr').show();
+        } else {
+            $('tbody tr:Contains(\'' + filter_val + '\')').show();
+            $('tbody tr:not(:Contains(\'' + filter_val + '\'))').hide();
+        }
+    });
+
+$('#filter_clear').click(function(event) {
+        $('#filter_input').val('');
+        $('#filter_button').click();
+    });
+
+
+
+</script>
+
+<script type="text/javascript">
+jQuery.expr[':'].contains = function(a,i,m){
+return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase())>=0;
+};
+$(document).ready(function(){  
+$('input[name="filter"]').keyup(function(){ 
+var searchterm = $(this).val();
+			if(searchterm.length >2) {
+var match = $('tr.data-row:contains("' + searchterm + '")');
+var nomatch = $('tr.data-row:not(:contains("' + searchterm + '"))');
+				match.addClass('selected');
+nomatch.css("display", "none");
+} else {
+$('tr.data-row').css("display", "");
+$('tr.data-row').removeClass('selected');
+				}
+			});
+});	
+</script>
+-->
+<script type="text/javascript">
+function change(val1,val2,val3,val4,val5)
+{
+	//alert(document.getElementById(val1).disabled)
+	if(document.getElementById(val1).disabled){
+		//alert("hello")
+		//document.getElementById(val1).disabled=false;
+		document.getElementById(val2).disabled=false;
+		document.getElementById(val3).disabled=false;
+		document.getElementById(val4).disabled=false;
+		document.getElementById(val5).disabled=false;
+		//alert(document.getElementById(val1).disabled)
+	}
+	else {
+		//document.getElementById(val1).disabled=true;
+                document.getElementById(val2).disabled=true;
+                document.getElementById(val3).disabled=true;
+                document.getElementById(val4).disabled=true;
+                document.getElementById(val5).disabled=true;
+	}
+
+		
+}
+
+</script>
+
+<div class="modal fade" id="addserver" tabindex="-1" role="dialog" aria-labelledby="addHostLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">{% trans "Add server" %}</h4>
+			</div>
+			<form class="form-horizontal" method="post" role="form">{% csrf_token %}
+				<div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "ip" %}</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="ip" class="form-control" placeholder="{% trans "ip" %}"  required pattern="^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(\d|[1-2]\d|3[0-2]))$">
+                                </div>
+                            </div>
+			<div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary" name="ip_addr3">{% trans "Add Server" %}</button>
+                            </div>
+
+			</form>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+    <script src="/static/js/infrastructure.js"></script>
+{% endblock %}

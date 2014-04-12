@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tags_active %}
+{% load staticfiles %}
+{% block title %}{% trans "IpReservation" %}{% endblock %}
+{% include sidebar_ipaddress.html %}
+{% block content %}
+
+<!--""" loading the set_var customized tag and testing it """ -->
+{% load set_var %}
+ 
+{% set a = 3 %}
+{% set b = 0 %}
+{% set b = request.GET.urlencode %}
+{% set c = "some string" %}
+
+<!-- adding the form validations -->
+
+
+ <div class="pagehead">
+            <h1><a href="">IPaddress Reservation</a></h1>
+           {{hello}} <br>
+           {{s.name}}<br>
+         {% for x in l1 %} 
+               student object is {{x}}<br>
+               student name : {{x.name}}<br>
+               student age : {{x.age}}<br>
+         {% endfor %}
+        </div>
+{% endblock %}
+

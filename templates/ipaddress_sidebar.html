@@ -1,0 +1,22 @@
+{% load i18n %}
+{% load tags_active %}
+        <div class="pagehead">
+            <a href="" class="btn btn-sm btn-success pull-right">{% trans "New Instance" %}</a>
+           
+        </div>
+        <div class="sidebar">
+            <ul>
+                <li>
+                    <a href="" class="list {% active request "^/instance" %}">{% trans "Instances" %}</a>
+                </li>
+                <li>
+                    <a href="" class="list {% active request "^/storage" %}">{% trans "Storages" %}</a>
+                </li>
+                <li>
+                    <a href="" class="list {% active request "^/network" %}">{% trans "Networks" %}</a>
+                </li>
+                <li>
+                    <a href="" class="">{% trans "Overview" %}</a>
+                </li>
+            </ul>
+        </div>
